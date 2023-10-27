@@ -1,0 +1,16 @@
+
+*.meta
+GameProtos/Library/*
+GameProtos/Logs/*
+GameProtos/Temp/*
+GameProtos/obj/*
+GameProtos/Packages/*
+GameProtos/ProjectSettings/*
+GameProtos/.vsconfig
+*.sln
+
+GameProtos/UserSettings/*
+GameProtos/Assembly-CSharp.csproj
+GameProtos/Assets/Scenes/*
+GameProtos/Assets/Tester/*
+GameProtos/.vs/GameProtos/v16/.suo
