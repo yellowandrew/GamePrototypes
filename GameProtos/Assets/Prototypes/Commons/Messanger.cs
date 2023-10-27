@@ -1,10 +1,15 @@
 using System;
 using System.Collections.Generic;
-
+using UnityEngine;
 
 public class Messanger 
 {
     static Dictionary<int, List<EventHandler<object>>> dicts = new Dictionary<int, List<EventHandler<object>>>();
+
+    public static void Clear() {
+        dicts.Clear();
+    }
+    
     public static void Emit(int mId, object msg, object sender = null) {
         foreach (var handler in dicts[mId])
         {
