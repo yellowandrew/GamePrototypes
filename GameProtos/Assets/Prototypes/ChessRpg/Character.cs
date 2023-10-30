@@ -53,7 +53,7 @@ public class Character : MonoBehaviour
     private void OnMouseUpAsButton()
     {
         Vector2 pos = new Vector2(transform.position.x, transform.position.z);
-        stepList = Utils.GetStep(pos, move_type);
+       // stepList = Utils.GetStep(pos, move_type);
         Messanger.Emit(Def.MSG_Click_Character, "",this);
     }
 }
