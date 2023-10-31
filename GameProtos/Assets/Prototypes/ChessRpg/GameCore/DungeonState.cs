@@ -99,7 +99,6 @@ public class SelectActorState : GameState
                 Game.ClickFootStep(click_row, click_col);
                 parent.popChild();
             
-               
             }
           
         }

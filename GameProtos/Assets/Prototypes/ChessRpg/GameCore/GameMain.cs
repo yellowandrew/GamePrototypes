@@ -55,67 +55,65 @@ public class GameMain : MonoBehaviour
     }
 
     public void LoadMap(int id) {
-        maskMat.DOFade(1, 1).OnComplete(() =>
+        _mapData = mapDatas[id];
+        MapText.text = _mapData.name;
+        foreach (Transform t in mapRoot)
         {
-            _mapData = mapDatas[id];
-            MapText.text = _mapData.name;
-            foreach (Transform t in mapRoot)
+            GameObject.Destroy(t.gameObject);
+        }
+
+        for (int i = 0; i < _mapData.tiles.Count; i++)
+        {
+            int r = i / 8;
+            int c = i % 8;
+            if (_mapData.tiles[i] >= 0)
             {
-                GameObject.Destroy(t.gameObject);
-            }
-
-            for (int i = 0; i < _mapData.tiles.Count; i++)
-            {
-                int r = i / 8;
-                int c = i % 8;
-                if (_mapData.tiles[i] >= 0)
-                {
-                    GameObject go = GameObject.Instantiate(prefabs.tiles[_mapData.tiles[i]]);
-                    go.transform.position = new Vector3(c, 0, -r);
-                    go.name = "tile(" + r + "," + c + ")";
-                    go.transform.parent = mapRoot;
-                }
-            }
-
-            foreach (var s in _mapData.objects)
-            {
-                var args = s.Split(',');
-                int z = int.Parse(args[0]);
-                int x = int.Parse(args[1]);
-                int i = int.Parse(args[2]);
-                GameObject go = GameObject.Instantiate(prefabs.items[i]);
-                go.transform.position = new Vector3(x, 0, -z);
-                go.name = "object(" + i + ")";
-                go.transform.parent = mapRoot;
-
-            }
-
-            foreach (var s in _mapData.triggers)
-            {
-                var args = s.Split('#')[0].Split(',');
-                int z = int.Parse(args[0]);
-                int x = int.Parse(args[1]);
-                int i = int.Parse(args[2]);
-                GameObject go = GameObject.Instantiate(prefabs.items[i]);
-                go.transform.position = new Vector3(x, 0, -z);
-                go.name = "trigger(" + i + ")";
-                go.transform.parent = mapRoot;
-
-            }
-
-            foreach (var a in _mapData.actors)
-            {
-                var args = a.Split(',');
-                int z = int.Parse(args[0]);
-                int x = int.Parse(args[1]);
-                int i = int.Parse(args[2]);
-                GameObject go = GameObject.Instantiate(prefabs.actors[i]);
-                go.transform.position = new Vector3(x, 0, -z);
-                go.name = "actor(" + i + ")";
+                GameObject go = GameObject.Instantiate(prefabs.tiles[_mapData.tiles[i]]);
+                go.transform.position = new Vector3(c, 0, -r);
+                go.name = "tile(" + r + "," + c + ")";
                 go.transform.parent = mapRoot;
             }
+        }
 
+        foreach (var s in _mapData.objects)
+        {
+            var args = s.Split(',');
+            int z = int.Parse(args[0]);
+            int x = int.Parse(args[1]);
+            int i = int.Parse(args[2]);
+            GameObject go = GameObject.Instantiate(prefabs.items[i]);
+            go.transform.position = new Vector3(x, 0, -z);
+            go.name = "object(" + i + ")";
+            go.transform.parent = mapRoot;
 
+        }
+
+        foreach (var s in _mapData.triggers)
+        {
+            var args = s.Split('#')[0].Split(',');
+            int z = int.Parse(args[0]);
+            int x = int.Parse(args[1]);
+            int i = int.Parse(args[2]);
+            GameObject go = GameObject.Instantiate(prefabs.items[i]);
+            go.transform.position = new Vector3(x, 0, -z);
+            go.name = "trigger(" + i + ")";
+            go.transform.parent = mapRoot;
+
+        }
+
+        foreach (var a in _mapData.actors)
+        {
+            var args = a.Split(',');
+            int z = int.Parse(args[0]);
+            int x = int.Parse(args[1]);
+            int i = int.Parse(args[2]);
+            GameObject go = GameObject.Instantiate(prefabs.actors[i]);
+            go.transform.position = new Vector3(x, 0, -z);
+            go.name = "actor(" + i + ")";
+            go.transform.parent = mapRoot;
+        }
+        maskMat.DOFade(1, 0.5f).OnComplete(() =>
+        {
             maskMat.DOFade(0, 1).OnComplete(() => {});
         });
        
@@ -139,14 +137,15 @@ public class GameMain : MonoBehaviour
 
     public void LoadDungeon(int id) {
         //_dungeonData = dungeonDatas[id];
-        
-        stack.push(new DungeonState(this));
         LoadMap(id);
+        stack.push(new DungeonState(this));
+       
 
     }
 
     public void EmptySlot(int row, int col) {
         int idx = Utils.CoordToIndex(row, col);
+       
         mapSlots[idx] = 0;
     }
     public void DirtySlot(int row, int col,int id)
@@ -162,8 +161,10 @@ public class GameMain : MonoBehaviour
 
     public void MoveActorTo(int row, int col)
     {
-        EmptySlot(row, col);
+        EmptySlot(curActor.row, curActor.col);
         curActor.transform.position = new Vector3(col, 0, -row);
+        curActor.row = row;
+        curActor.col = col;
         DirtySlot(row, col, curActor.id);
     }
 
